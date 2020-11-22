@@ -1,6 +1,27 @@
 version: "2.2"
 
 services:
+  nodeapp:
+    build:
+      context: "./nodeapp"
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: .
+        target: /nodeapp
+    command: sh -c '/nodeapp/wait_for_it.sh mysql:3306 && npm run docker'
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=test
+    networks:
+      frontapp_a:
+        ipv4_address: 172.22.0.9
+    depends_on:
+      - mysql
   app:
     build:
       context: "."
